@@ -1,23 +1,22 @@
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import Amplify from "aws-amplify";
-import aws_exports from "./aws-exports";
-import AuthScreen from "./src/screens/Auth";
+import React from "react";
+import { AppLoading } from "expo";
+import * as Font from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+import AppNavigator from "./AppNavigator";
 
-//---AWS Amplify---//
-Amplify.configure(aws_exports);
-//---AWS Amplify---//
+export default class AppLoader extends React.Component {
+  state = { isReady: false };
 
-const navigator = createStackNavigator(
-  {
-    Auth: AuthScreen
-  },
-  {
-    initialRouteName: "Auth",
-    defaultNavigationOptions: {
-      title: "Hudddle"
-    }
+  async componentDidMount() {
+    await Font.loadAsync({
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+      ...Ionicons.font
+    });
+    this.setState({ isReady: true });
   }
-);
 
-export default createAppContainer(navigator);
+  render() {
+    return !this.state.isReady ? <AppLoading /> : <AppNavigator />;
+  }
+}
