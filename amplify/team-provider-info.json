@@ -1,0 +1,20 @@
+{
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-hudddle-app-prod-192645-authRole",
+            "UnauthRoleArn": "arn:aws:iam::056265135607:role/amplify-hudddle-app-prod-192645-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::056265135607:role/amplify-hudddle-app-prod-192645-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-hudddle-app-prod-192645-deployment",
+            "UnauthRoleName": "amplify-hudddle-app-prod-192645-unauthRole",
+            "StackName": "amplify-hudddle-app-prod-192645",
+            "StackId": "arn:aws:cloudformation:us-east-1:056265135607:stack/amplify-hudddle-app-prod-192645/15c37e30-1aa9-11ea-a6d9-0a279eeb3bc1",
+            "AmplifyAppId": "dfchacdb63fjm"
+        },
+        "categories": {
+            "auth": {
+                "hudddleappe534752a": {}
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+	"auth": {
+		"hudddleappe534752a": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	}
+}
