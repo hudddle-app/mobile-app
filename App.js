@@ -13,6 +13,7 @@ export default class AppLoader extends React.Component {
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
       ...Ionicons.font
     });
+
     this.setState({ isReady: true });
   }
 
