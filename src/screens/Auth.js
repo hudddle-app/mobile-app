@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Auth } from "aws-amplify";
 import SignUpOrSignInForm from "../components/Auth/SignUpOrSignInForm";
 import ConfirmationCodeModal from "../components/Auth/ConfirmationCodeModal";
-import { Text } from "native-base";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 class Authorization extends React.Component {
@@ -62,6 +61,15 @@ class Authorization extends React.Component {
     }
   };
 
+  handleSignIn = () => {
+    const { email, password } = this.state;
+    Auth.signIn(email, password)
+      // If we are successful, navigate to Home screen
+      .then(user => this.props.navigation.navigate("Dashboard"))
+      // On failure, display error in console
+      .catch(err => console.log(err));
+  };
+
   render() {
     const { isSignUpForm } = this.state;
     return (
@@ -84,7 +92,7 @@ class Authorization extends React.Component {
 
         <ConfirmationCodeModal
           modalVisible={this.state.modalVisible}
-          toggleModal={this.handleToggleModal}
+          handleToggleModal={this.handleToggleModal}
           handleConfirmCode={this.handleConfirmCode}
         />
       </OuterView>

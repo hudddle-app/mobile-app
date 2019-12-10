@@ -20,6 +20,7 @@ const SignUpOrSignInForm = ({
           placeholder="Email"
           autoCorrect={false}
           autoCapitalize="none"
+          keyboardType="email-address"
           value={email}
           onChangeText={e => handleInput(e, "email")}
         />
@@ -48,7 +49,7 @@ const SignUpOrSignInForm = ({
         </Item>
       )}
 
-      <Button block style={styles.button} onPress={handleSubmit}>
+      <Button dark block onPress={handleSubmit}>
         <Text>{formText}</Text>
       </Button>
     </View>
@@ -58,9 +59,6 @@ const SignUpOrSignInForm = ({
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 20
-  },
-  button: {
-    backgroundColor: "black"
   }
 });
 

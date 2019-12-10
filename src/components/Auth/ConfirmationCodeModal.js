@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Modal, View, StyleSheet } from "react-native";
 import { Input, Item, Button, Text } from "native-base";
+import { EvilIcons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 
 const ConfirmationCodeModal = ({
   modalVisible,
-  toggleModal,
+  handleToggleModal,
   handleConfirmCode
 }) => {
   const [code, setCode] = useState("");
@@ -13,8 +15,16 @@ const ConfirmationCodeModal = ({
       animationType="slide"
       transparent={false}
       visible={modalVisible}
-      onRequestClose={toggleModal}
+      onRequestClose={handleToggleModal}
+      style={{ position: "relative" }}
     >
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={handleToggleModal}
+      >
+        <EvilIcons name="close" style={styles.closeButton} />
+      </TouchableOpacity>
+
       <View style={styles.modalView}>
         <Text style={styles.modalTitle}>Confirmation Code</Text>
 
@@ -28,11 +38,12 @@ const ConfirmationCodeModal = ({
             placeholder="Code"
             autoCorrect={false}
             autoCapitalize="none"
+            keyboardType="numeric"
             value={code}
             onChangeText={setCode}
           />
         </Item>
-        <Button primary onPress={() => handleConfirmCode(code)}>
+        <Button dark block onPress={() => handleConfirmCode(code)}>
           <Text>Submit</Text>
         </Button>
       </View>
@@ -44,13 +55,27 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "#EDEDED",
     height: "100%",
-    paddingTop: 30
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative"
   },
   modalTitle: {
     fontWeight: "bold",
     fontSize: 22,
     marginBottom: 10,
     textAlign: "center"
+  },
+  buttonContainer: {
+    position: "absolute",
+    zIndex: 1,
+    top: 20,
+    right: 20
+  },
+  closeButton: {
+    fontSize: 28,
+    justifyContent: "flex-end"
   }
 });
 
