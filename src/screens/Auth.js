@@ -1,9 +1,10 @@
 import React from "react";
-import styled from "styled-components";
 import { Auth } from "aws-amplify";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text } from "native-base";
 import SignUpOrSignInForm from "../components/Auth/SignUpOrSignInForm";
 import ConfirmationCodeModal from "../components/Auth/ConfirmationCodeModal";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import Toast from "../layout/Toast";
 
 class Authorization extends React.Component {
   state = {
@@ -11,7 +12,9 @@ class Authorization extends React.Component {
     password: "",
     confirmPassword: "",
     modalVisible: false,
-    isSignUpForm: false
+    isSignUpForm: false,
+    showErrorMessage: false,
+    errorMessage: ""
   };
 
   handleInput = (e, item) => {
@@ -71,10 +74,13 @@ class Authorization extends React.Component {
   };
 
   render() {
-    const { isSignUpForm } = this.state;
+    const { isSignUpForm, showErrorMessage, errorMessage } = this.state;
+
     return (
-      <OuterView>
-        <Title>Hudddle</Title>
+      <View style={styles.outerView}>
+        <Toast visible={true} />
+        <Text style={styles.title}>hudddle</Text>
+
         <SignUpOrSignInForm
           email={this.state.email}
           password={this.state.password}
@@ -82,12 +88,13 @@ class Authorization extends React.Component {
           isSignUpForm={isSignUpForm}
           handleInput={this.handleInput}
           handleSignUp={this.handleSignUp}
+          handleSignIn={this.handleSignIn}
         />
 
         <TouchableOpacity onPress={this.handleToggleForm}>
-          <SignUpText>
+          <Text style={styles.signUpText}>
             {isSignUpForm ? "Sign In" : "Don't have an account?"}
-          </SignUpText>
+          </Text>
         </TouchableOpacity>
 
         <ConfirmationCodeModal
@@ -95,28 +102,28 @@ class Authorization extends React.Component {
           handleToggleModal={this.handleToggleModal}
           handleConfirmCode={this.handleConfirmCode}
         />
-      </OuterView>
+      </View>
     );
   }
 }
 
-const Title = styled.Text`
-  font-size: 28px;
-  font-weight: bold;
-  text-align: center;
-  margin-vertical: 20;
-`;
-
-const SignUpText = styled.Text`
-  align-self: flex-end;
-  margin-right: 25;
-  margin-top: 20;
-`;
-
-const OuterView = styled.View`
-  height: 100%;
-  flex: 1;
-  justify-content: center;
-`;
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 36,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginVertical: 20
+  },
+  signUpText: {
+    alignSelf: "flex-end",
+    marginRight: 25,
+    marginTop: 20
+  },
+  outerView: {
+    height: "100%",
+    flex: 1,
+    justifyContent: "center"
+  }
+});
 
 export default Authorization;

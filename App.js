@@ -3,7 +3,7 @@ import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import AppNavigator from "./AppNavigator";
-
+import { Root } from "native-base";
 export default class AppLoader extends React.Component {
   state = { isReady: false };
 
@@ -18,6 +18,12 @@ export default class AppLoader extends React.Component {
   }
 
   render() {
-    return !this.state.isReady ? <AppLoading /> : <AppNavigator />;
+    return !this.state.isReady ? (
+      <AppLoading />
+    ) : (
+      <Root>
+        <AppNavigator />
+      </Root>
+    );
   }
 }
