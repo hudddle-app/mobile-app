@@ -1,19 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Input, Item, Button, Text } from "native-base";
 import { Auth } from "aws-amplify";
+import SignUpOrSignInForm from "../components/Auth/SignUpOrSignInForm";
 import ConfirmationCodeModal from "../components/Auth/ConfirmationCodeModal";
+import { Text } from "native-base";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 class Authorization extends React.Component {
-  state = { email: "", password: "", confirmPassword: "", modalVisible: false };
+  state = {
+    email: "",
+    password: "",
+    confirmPassword: "",
+    modalVisible: false,
+    isSignUpForm: false
+  };
 
   handleInput = (e, item) => {
     this.setState({ [item]: e });
   };
 
-  toggleModal = () => {
+  handleToggleModal = () => {
     this.setState(state => {
       return { modalVisible: !state.modalVisible };
+    });
+  };
+
+  handleToggleForm = () => {
+    this.setState(state => {
+      return { isSignUpForm: !state.isSignUpForm };
     });
   };
 
@@ -28,7 +42,6 @@ class Authorization extends React.Component {
   };
 
   handleSignUp = () => {
-    // alert(JSON.stringify(this.state));
     const { email, password, confirmPassword } = this.state;
     // Make sure passwords match
     if (password === confirmPassword) {
@@ -39,7 +52,7 @@ class Authorization extends React.Component {
       })
         // On success, show Confirmation Code Modal
         .then(response => {
-          console.log("Response: ", response);
+          console.log("Response: ", response); // <== {userId}
           this.setState({ modalVisible: true });
         })
         // On failure, display error in console
@@ -50,40 +63,28 @@ class Authorization extends React.Component {
   };
 
   render() {
+    const { isSignUpForm } = this.state;
     return (
       <OuterView>
-        <Title>Auth View</Title>
-        <Item regular style={{ marginVertical: 10 }}>
-          <Input
-            placeholder="Email"
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={e => this.handleInput(e, "email")}
-          />
-        </Item>
-        <Item regular style={{ marginVertical: 10 }}>
-          <Input
-            placeholder="Password"
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={e => this.handleInput(e, "password")}
-          />
-        </Item>
-        <Item regular style={{ marginVertical: 10 }}>
-          <Input
-            placeholder="Confirm Password"
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={e => this.handleInput(e, "confirmPassword")}
-          />
-        </Item>
-        <Button primary block onPress={this.handleSignUp}>
-          <Text>Sign Up</Text>
-        </Button>
+        <Title>Hudddle</Title>
+        <SignUpOrSignInForm
+          email={this.state.email}
+          password={this.state.password}
+          confirmPassword={this.state.confirmPassword}
+          isSignUpForm={isSignUpForm}
+          handleInput={this.handleInput}
+          handleSignUp={this.handleSignUp}
+        />
+
+        <TouchableOpacity onPress={this.handleToggleForm}>
+          <SignUpText>
+            {isSignUpForm ? "Sign In" : "Don't have an account?"}
+          </SignUpText>
+        </TouchableOpacity>
 
         <ConfirmationCodeModal
           modalVisible={this.state.modalVisible}
-          toggleModal={this.toggleModal}
+          toggleModal={this.handleToggleModal}
           handleConfirmCode={this.handleConfirmCode}
         />
       </OuterView>
@@ -92,15 +93,22 @@ class Authorization extends React.Component {
 }
 
 const Title = styled.Text`
-  font-size: 20px;
+  font-size: 28px;
   font-weight: bold;
   text-align: center;
   margin-vertical: 20;
 `;
 
+const SignUpText = styled.Text`
+  align-self: flex-end;
+  margin-right: 25;
+  margin-top: 20;
+`;
+
 const OuterView = styled.View`
-  padding-top: 30;
-  align-items: center;
+  height: 100%;
+  flex: 1;
+  justify-content: center;
 `;
 
 export default Authorization;
