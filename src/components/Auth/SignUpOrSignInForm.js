@@ -1,12 +1,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Input, Item, Button, Text } from "native-base";
+import { Input, Item, Button, Text, Spinner } from "native-base";
 
 const SignUpOrSignInForm = ({
+  displayName,
   email,
   password,
   confirmPassword,
   isSignUpForm,
+  submitting,
   handleInput,
   handleSignUp,
   handleSignIn
@@ -15,6 +17,18 @@ const SignUpOrSignInForm = ({
   const handleSubmit = isSignUpForm ? handleSignUp : handleSignIn;
   return (
     <View style={styles.container}>
+      {isSignUpForm && (
+        <Item regular style={{ marginVertical: 10 }}>
+          <Input
+            placeholder="Display Name"
+            autoCorrect={false}
+            autoCapitalize="none"
+            secureTextEntry
+            value={displayName}
+            onChangeText={e => handleInput(e, "displayName")}
+          />
+        </Item>
+      )}
       <Item regular style={{ marginVertical: 10 }}>
         <Input
           placeholder="Email"
@@ -50,7 +64,7 @@ const SignUpOrSignInForm = ({
       )}
 
       <Button dark block onPress={handleSubmit}>
-        <Text>{formText}</Text>
+        {submitting ? <Spinner color="white" /> : <Text>{formText}</Text>}
       </Button>
     </View>
   );

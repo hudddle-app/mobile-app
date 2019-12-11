@@ -3,12 +3,14 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { View, Text } from "native-base";
 import { EvilIcons } from "@expo/vector-icons";
 
-const Toast = ({ visible, message }) => {
+const Toast = ({ visible = false, message = "", onClose }) => {
   return visible ? (
     <View style={styles.toastContainer}>
-      <Text style={styles.message}>Oh no!</Text>
+      <Text style={styles.message}>
+        {message || "Oops! Something went wrong."}
+      </Text>
 
-      <TouchableOpacity style={styles.iconContainer}>
+      <TouchableOpacity onPress={onClose}>
         <EvilIcons name="close" style={styles.icon} />
       </TouchableOpacity>
     </View>
@@ -31,9 +33,10 @@ const styles = StyleSheet.create({
   },
   message: {
     color: "white",
-    fontSize: 16
+    fontSize: 16,
+    flex: 1
   },
-  iconContainer: {},
-  icon: { color: "white", fontSize: 22 }
+  icon: { color: "white", fontSize: 22, marginRight: 5 }
 });
+
 export default Toast;

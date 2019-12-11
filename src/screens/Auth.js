@@ -8,11 +8,13 @@ import Toast from "../layout/Toast";
 
 class Authorization extends React.Component {
   state = {
+    displayName: "",
     email: "",
     password: "",
     confirmPassword: "",
     modalVisible: false,
     isSignUpForm: false,
+    submitting: false,
     showErrorMessage: false,
     errorMessage: ""
   };
@@ -27,9 +29,29 @@ class Authorization extends React.Component {
     });
   };
 
+  handleToggleToast = (errorMessage = "") => {
+    this.setState(state => {
+      return {
+        showErrorMessage: !state.showErrorMessage,
+        errorMessage,
+        submitting: false
+      };
+    });
+  };
+
   handleToggleForm = () => {
     this.setState(state => {
-      return { isSignUpForm: !state.isSignUpForm };
+      return {
+        isSignUpForm: !state.isSignUpForm,
+        password: "",
+        confirmPassword: ""
+      };
+    });
+  };
+
+  handleToggleSubmit = () => {
+    this.setState(state => {
+      return { submitting: !state.submitting };
     });
   };
 
@@ -47,38 +69,52 @@ class Authorization extends React.Component {
     const { email, password, confirmPassword } = this.state;
     // Make sure passwords match
     if (password === confirmPassword) {
+      this.handleToggleSubmit();
       Auth.signUp({
         username: email,
         password,
         attributes: { email }
       })
-        // On success, show Confirmation Code Modal
         .then(response => {
           console.log("Response: ", response); // <== {userId}
-          this.setState({ modalVisible: true });
+          this.setState({ modalVisible: true, submitting: false });
         })
-        // On failure, display error in console
-        .catch(err => console.log(err));
+        .catch(err => this.handleToggleToast(err.message));
     } else {
-      alert("Passwords do not match.");
+      this.handleToggleToast("Passwords do not match.");
     }
   };
 
   handleSignIn = () => {
     const { email, password } = this.state;
+    this.handleToggleSubmit();
     Auth.signIn(email, password)
+
       // If we are successful, navigate to Home screen
-      .then(user => this.props.navigation.navigate("Dashboard"))
+      .then(user => {
+        this.handleToggleSubmit();
+        this.props.navigation.navigate("Dashboard");
+      })
       // On failure, display error in console
-      .catch(err => console.log(err));
+      .catch(err => this.handleToggleToast(err.message));
   };
 
   render() {
-    const { isSignUpForm, showErrorMessage, errorMessage } = this.state;
+    const {
+      isSignUpForm,
+      submitting,
+      showErrorMessage,
+      errorMessage
+    } = this.state;
 
     return (
       <View style={styles.outerView}>
-        <Toast visible={true} />
+        <Toast
+          visible={showErrorMessage}
+          message={errorMessage}
+          onClose={this.handleToggleToast}
+        />
+
         <Text style={styles.title}>hudddle</Text>
 
         <SignUpOrSignInForm
@@ -86,6 +122,7 @@ class Authorization extends React.Component {
           password={this.state.password}
           confirmPassword={this.state.confirmPassword}
           isSignUpForm={isSignUpForm}
+          submitting={submitting}
           handleInput={this.handleInput}
           handleSignUp={this.handleSignUp}
           handleSignIn={this.handleSignIn}
