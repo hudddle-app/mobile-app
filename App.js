@@ -4,6 +4,14 @@ import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import AppNavigator from "./AppNavigator";
 import { Root } from "native-base";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
+import rootReducer from "./src/reducers/index";
+
+const store = configureStore({
+  reducer: rootReducer
+});
+
 export default class AppLoader extends React.Component {
   state = { isReady: false };
 
@@ -21,9 +29,11 @@ export default class AppLoader extends React.Component {
     return !this.state.isReady ? (
       <AppLoading />
     ) : (
-      <Root>
-        <AppNavigator />
-      </Root>
+      <Provider store={store}>
+        <Root>
+          <AppNavigator />
+        </Root>
+      </Provider>
     );
   }
 }

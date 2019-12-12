@@ -5,6 +5,7 @@ import { View, Text } from "native-base";
 import SignUpOrSignInForm from "../components/Auth/SignUpOrSignInForm";
 import ConfirmationCodeModal from "../components/Auth/ConfirmationCodeModal";
 import Toast from "../layout/Toast";
+import { connect } from "react-redux";
 
 class Authorization extends React.Component {
   state = {
@@ -55,48 +56,52 @@ class Authorization extends React.Component {
     });
   };
 
-  handleConfirmCode = confirmationCode => {
+  handleConfirmCode = async confirmationCode => {
     const { email } = this.state;
-    Auth.confirmSignUp(email, confirmationCode, {})
-      .then(() => {
-        this.setState({ modalVisible: false });
-        this.props.navigation.navigate("Dashboard");
-      })
-      .catch(err => console.log(err));
-  };
-
-  handleSignUp = () => {
-    const { email, password, confirmPassword } = this.state;
-    // Make sure passwords match
-    if (password === confirmPassword) {
-      this.handleToggleSubmit();
-      Auth.signUp({
-        username: email,
-        password,
-        attributes: { email }
-      })
-        .then(response => {
-          console.log("Response: ", response); // <== {userId}
-          this.setState({ modalVisible: true, submitting: false });
-        })
-        .catch(err => this.handleToggleToast(err.message));
-    } else {
-      this.handleToggleToast("Passwords do not match.");
+    try {
+      const user = await Auth.confirmSignUp(email, confirmationCode, {});
+      console.log("Confirmed User: ", user);
+      this.setState({ modalVisible: false });
+      this.props.navigation.navigate("Dashboard");
+    } catch (err) {
+      this.handleToggleToast(err.message);
     }
   };
 
-  handleSignIn = () => {
+  handleSignUp = async () => {
+    const { email, password, confirmPassword } = this.state;
+    // Check password match
+    if (password !== confirmPassword) {
+      return this.handleToggleToast("Passwords do not match.");
+    } else {
+      // Sign up user
+      try {
+        this.handleToggleSubmit();
+        const user = await Auth.signUp({
+          username: email,
+          password,
+          attributes: { email }
+        });
+        console.log("New User: ", user);
+        this.setState({ modalVisible: true, submitting: false });
+      } catch (err) {
+        this.handleToggleToast(err.message);
+      }
+    }
+  };
+
+  handleSignIn = async () => {
     const { email, password } = this.state;
     this.handleToggleSubmit();
-    Auth.signIn(email, password)
-
-      // If we are successful, navigate to Home screen
-      .then(user => {
-        this.handleToggleSubmit();
-        this.props.navigation.navigate("Dashboard");
-      })
-      // On failure, display error in console
-      .catch(err => this.handleToggleToast(err.message));
+    try {
+      const user = await Auth.signIn(email, password);
+      console.log("Username: ", user.sub);
+      // 1e9e1250-2c57-47d0-a0e4-b4bd2985d370
+      await this.handleToggleSubmit();
+      this.props.navigation.navigate("Dashboard");
+    } catch (err) {
+      this.handleToggleToast(err.message);
+    }
   };
 
   render() {
@@ -109,12 +114,6 @@ class Authorization extends React.Component {
 
     return (
       <View style={styles.outerView}>
-        <Toast
-          visible={showErrorMessage}
-          message={errorMessage}
-          onClose={this.handleToggleToast}
-        />
-
         <Text style={styles.title}>hudddle</Text>
 
         <SignUpOrSignInForm
@@ -138,6 +137,12 @@ class Authorization extends React.Component {
           modalVisible={this.state.modalVisible}
           handleToggleModal={this.handleToggleModal}
           handleConfirmCode={this.handleConfirmCode}
+        />
+
+        <Toast
+          visible={showErrorMessage}
+          message={errorMessage}
+          onClose={this.handleToggleToast}
         />
       </View>
     );
@@ -163,4 +168,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Authorization;
+const mapState = state => {
+  return { user: state.user };
+};
+
+export default connect(mapState, null)(Authorization);
