@@ -59,8 +59,7 @@ class Authorization extends React.Component {
   handleConfirmCode = async confirmationCode => {
     const { email } = this.state;
     try {
-      const user = await Auth.confirmSignUp(email, confirmationCode, {});
-      console.log("Confirmed User: ", user);
+      await Auth.confirmSignUp(email, confirmationCode, {});
       this.setState({ modalVisible: false });
       this.props.navigation.navigate("Dashboard");
     } catch (err) {
@@ -82,7 +81,7 @@ class Authorization extends React.Component {
           password,
           attributes: { email }
         });
-        console.log("New User: ", user);
+        // console.log("New User: ", user.userSub);
         this.setState({ modalVisible: true, submitting: false });
       } catch (err) {
         this.handleToggleToast(err.message);
@@ -95,8 +94,7 @@ class Authorization extends React.Component {
     this.handleToggleSubmit();
     try {
       const user = await Auth.signIn(email, password);
-      console.log("Username: ", user.sub);
-      // 1e9e1250-2c57-47d0-a0e4-b4bd2985d370
+      // console.log("User Sub: ", user.username);
       await this.handleToggleSubmit();
       this.props.navigation.navigate("Dashboard");
     } catch (err) {

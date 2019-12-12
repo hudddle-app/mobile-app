@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { Input, Item, Button, Text, Spinner } from "native-base";
 
 const SignUpOrSignInForm = ({
@@ -16,14 +16,13 @@ const SignUpOrSignInForm = ({
   const formText = isSignUpForm ? "Sign Up" : "Sign In";
   const handleSubmit = isSignUpForm ? handleSignUp : handleSignIn;
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
       {isSignUpForm && (
         <Item regular style={{ marginVertical: 10 }}>
           <Input
             placeholder="Display Name"
             autoCorrect={false}
             autoCapitalize="none"
-            secureTextEntry
             value={displayName}
             onChangeText={e => handleInput(e, "displayName")}
           />
@@ -66,7 +65,7 @@ const SignUpOrSignInForm = ({
       <Button dark block onPress={handleSubmit}>
         {submitting ? <Spinner color="white" /> : <Text>{formText}</Text>}
       </Button>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
